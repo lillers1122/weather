@@ -134,7 +134,7 @@ export default class App extends React.Component {
         <Text style={styles.header}>☁️ Miss Sky ☁️</Text>
         <Text></Text>
         <Text style ={styles.blurbTwo}>Weather Here, Weather</Text>
-        <Text style={styles.header}>{this.state.question2}</Text>
+        <Text style={styles.time}>{this.state.question2}</Text>
 
         <Svg height='100' width='100' style={{alignItems: "center", justifyContent: 'center'}}>
           <Circle
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: 30,
-    marginBottom: 10,
+    marginBottom: 20,
     // color: "white",
   },
   blurb: {
@@ -187,13 +187,18 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginBottom: 40,
   },
+  time: {
+    fontSize: 30,
+    marginBottom: 20,
+    color: "white",
+  },
   temp: {
     fontSize: 45,
     color: 'white',
   },
   slider: {
     position: 'relative',
-    marginTop: HEIGHT * 0.25,
+    marginTop: HEIGHT * 0.15,
     width: WIDTH * .9,
   },
 });

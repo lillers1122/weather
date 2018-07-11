@@ -53,13 +53,11 @@ export default class App extends React.Component {
     let chosen = this.pickColor(tempIndicator)
 
     this.setState({ question: tempIndicator, question2: time, color: chosen });
-
   }
 
   pickTime(value) {
     let time = parseInt(this.state.tempTime[value]);
     let now = this.state.date.slice(16,18)
-    console.log(now);
 
     if (time == now) {
       time = "NOW"
@@ -131,14 +129,14 @@ export default class App extends React.Component {
             right: 0,
             top: 0,
             height: '100%',
-            // opacity: .75,
+            opacity: .75,
           }}/>
         <Text style={styles.header}>☁️ Miss Sky ☁️</Text>
         <Text></Text>
-        <Text style ={styles.blurbTwo}>Weather?</Text>
+        <Text style ={styles.blurbTwo}>Weather Here, Weather</Text>
         <Text style={styles.header}>{this.state.question2}</Text>
 
-        <Svg height='100' width='100'>
+        <Svg height='100' width='100' style={{alignItems: "center", justifyContent: 'center'}}>
           <Circle
             cx='50'
             cy='50'
@@ -147,8 +145,9 @@ export default class App extends React.Component {
             strokeWidth='2.5'
             fill={this.state.color}
           />
+          <Text style={styles.temp}>{this.state.question}</Text>
         </Svg>
-        <Text style={styles.header}>{this.state.question}</Text>
+
 
         <Slider
           minimumValue={0}
@@ -187,6 +186,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 18,
     marginBottom: 40,
+  },
+  temp: {
+    fontSize: 45,
+    color: 'white',
   },
   slider: {
     position: 'relative',

@@ -123,7 +123,7 @@ export default class App extends React.Component {
       <View style={styles.main}>
       <MapView
         style={{ alignSelf: 'stretch', height: HEIGHT}}
-        initialRegion={{ latitude: 47.6205, longitude: -122.3493, latitudeDelta: 0.0922, longitudeDelta: 0.0421, }} />
+        initialRegion={{ latitude: 47.6205, longitude: -122.3493, latitudeDelta: 0.0222, longitudeDelta: 0.0121, }} />
 
         <LinearGradient
         colors={[this.state.color, 'white']}
@@ -133,13 +133,14 @@ export default class App extends React.Component {
             right: 0,
             top: 0,
             height: '100%',
-            opacity: .75,
+            opacity: .80,
           }}/>
           <View style={styles.overlay}>
 
-          <Text style={styles.header}>☁️ Miss Sky ☁️</Text>
-          <Text></Text>
-          <Text style ={styles.blurb}>Weather Here, Weather</Text>
+
+          <Text style ={styles.header}>Weather</Text>
+          <Text style ={styles.header}>Here</Text>
+          <Text style ={styles.header}>Weather</Text>
           <Text style={styles.time}>{this.state.question2}</Text>
 
           <Svg height='100' width='100' style={{alignItems: "center", justifyContent: 'center'}}>
@@ -185,17 +186,18 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
   header: {
-    fontSize: 30,
+    fontSize: 45,
     marginBottom: 20,
     color: "white",
   },
   blurb: {
     textAlign: 'center',
     color: 'white',
-    fontSize: 18,
-    marginBottom: 40,
+    fontSize: 30,
+    marginBottom: 30,
   },
   time: {
+    marginTop: 20,
     fontSize: 30,
     marginBottom: 20,
     color: "white",

@@ -213,22 +213,25 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: 60,
-    marginBottom: 20,
+    marginBottom: 15,
     color: "white",
+    fontWeight: 'bold',
   },
   header2: {
+    fontSize: 40,
+    marginBottom: 15,
+    color: "white",
+    fontWeight: 'bold',
+  },
+  header3: {
     fontSize: 45,
     marginBottom: 20,
     color: "white",
-  },
-  header3: {
-    fontSize: 40,
-    marginBottom: 20,
-    color: "white",
+    fontWeight: 'bold',
   },
   time: {
-    marginTop: 20,
-    fontSize: 30,
+    marginTop: 10,
+    fontSize: 35,
     fontWeight: 'bold',
     marginBottom: 20,
     color: "white",

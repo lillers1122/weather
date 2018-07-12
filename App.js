@@ -1,6 +1,6 @@
 import React from 'react';
 import Expo from 'expo';
-import { ActivityIndicator, StyleSheet, Text, View, Dimensions, Slider  } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, Slider  } from 'react-native';
 import { SKY_KEY } from 'react-native-dotenv'
 import { Location, Svg, LinearGradient } from 'expo';
 
@@ -14,51 +14,53 @@ export default class App extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      isLoading: true,
-      location: { coords: {latitude: 0, longitude: 0}},
+      location: { coords: {latitude: 47.6205, longitude: -122.3493}},
       color: 'white',
     }
   }
 
   componentDidMount(){
     Location.watchPositionAsync(GEOLOCATION_OPTIONS, this.locationChanged);
-
-    let url = 'https://api.darksky.net/forecast/' + KEY + '/47.6205,-122.3493?exclude=minutely,daily,flags'
-    return fetch(url)
-      .then((response) => response.json())
-      .then((responseJson) => {
-        console.log(responseJson.currently.time);
-        let time = (new Date(responseJson.currently.time * 1000)).toString()
-        let tempHours = responseJson.hourly.data.map((item)=>(new Date(item.time * 1000)).toString().slice(15,21))
-        let allTemps = responseJson.hourly.data.map((item)=>(item.apparentTemperature))
-        console.log(tempHours);
-
-        this.setState({
-          isLoading: false,
-          dataSource: responseJson,
-          tempHourly: allTemps,
-          tempTime: tempHours,
-          color: this.pickColor(Math.round(allTemps[0])),
-          question: Math.round(allTemps[0]),
-          question2: "NOW",
-          date: time,
-        }, function(){
-        });
-
-      })
-      .catch((error) =>{
-        console.error(error);
-      });
   }
 
   locationChanged = (location) => {
-    let region = {
-      latitude: location.coords.latitude,
-      longitude: location.coords.longitude,
-      latitudeDelta: 0.1,
-      longitudeDelta: 0.05,
+    if (location) {
+      let region = {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        latitudeDelta: 0.014,
+        longitudeDelta: 0.015,
+      }
+
+      let url = 'https://api.darksky.net/forecast/' + KEY + '/' + location.coords.latitude + ',' + location.coords.longitude + '?exclude=minutely,daily,flags'
+      console.log(url);
+
+      return fetch(url)
+        .then((response) => response.json())
+        .then((responseJson) => {
+          let time = (new Date(responseJson.currently.time * 1000)).toString()
+          let tempHours = responseJson.hourly.data.map((item) => (new Date(item.time * 1000)).toString().slice(15,21))
+          let allTemps = responseJson.hourly.data.map((item) => (item.apparentTemperature))
+
+          this.setState({
+            isLoading: false,
+            dataSource: responseJson,
+            tempHourly: allTemps,
+            tempTime: tempHours,
+            color: this.pickColor(Math.round(allTemps[0])),
+            question: Math.round(allTemps[0]),
+            question2: "NOW",
+            date: time,
+            location: location,
+            region: region,
+          });
+
+        })
+        .catch((error) =>{
+          console.error(error);
+        });
     }
-    this.setState({location, region})
+
   }
 
   onValueChange(value) {
@@ -124,16 +126,7 @@ export default class App extends React.Component {
   }
 
   render(){
-    console.log("hello");
-    console.log(this.state.tempHourly);
-
-    if(this.state.isLoading){
-      return(
-        <View style={{flex: 1, padding: 20}}>
-          <ActivityIndicator/>
-        </View>
-      )
-    }
+    console.log("hello, friend!");
 
     return(
       <View style={styles.main}>

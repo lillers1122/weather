@@ -1,7 +1,7 @@
 import React from 'react';
 import { ActivityIndicator, StyleSheet, Text, View, Dimensions, Slider  } from 'react-native';
 import { SKY_KEY } from 'react-native-dotenv'
-import { Svg, LinearGradient } from 'expo';
+import { Svg, LinearGradient, MapView } from 'expo';
 
 const { Circle } = Svg;
 const HEIGHT = Dimensions.get('window').height;
@@ -121,6 +121,10 @@ export default class App extends React.Component {
 
     return(
       <View style={styles.main}>
+      <MapView
+        style={{ alignSelf: 'stretch', height: HEIGHT}}
+        initialRegion={{ latitude: 47.6205, longitude: -122.3493, latitudeDelta: 0.0922, longitudeDelta: 0.0421, }} />
+
         <LinearGradient
         colors={[this.state.color, 'white']}
           style={{
@@ -131,36 +135,40 @@ export default class App extends React.Component {
             height: '100%',
             opacity: .75,
           }}/>
-        <Text style={styles.header}>☁️ Miss Sky ☁️</Text>
-        <Text></Text>
-        <Text style ={styles.blurbTwo}>Weather Here, Weather</Text>
-        <Text style={styles.time}>{this.state.question2}</Text>
+          <View style={styles.overlay}>
 
-        <Svg height='100' width='100' style={{alignItems: "center", justifyContent: 'center'}}>
-          <Circle
-            cx='50'
-            cy='50'
-            r='45'
-            stroke='pink'
-            strokeWidth='2.5'
-            fill={this.state.color}
+          <Text style={styles.header}>☁️ Miss Sky ☁️</Text>
+          <Text></Text>
+          <Text style ={styles.blurb}>Weather Here, Weather</Text>
+          <Text style={styles.time}>{this.state.question2}</Text>
+
+          <Svg height='100' width='100' style={{alignItems: "center", justifyContent: 'center'}}>
+            <Circle
+              cx='50'
+              cy='50'
+              r='45'
+              stroke='pink'
+              strokeWidth='2.5'
+              fill={this.state.color}
+            />
+            <Text style={styles.temp}>{this.state.question}</Text>
+          </Svg>
+
+
+          <Slider
+            minimumValue={0}
+            maximumValue={15}
+            minimumTrackTintColor="#1EB1FC"
+            maximumTractTintColor="#1EB1FC"
+            step={1}
+            value={0}
+            onValueChange={value => this.onValueChange(value)}
+            style={styles.slider}
+            thumbTintColor="#1EB1FC"
           />
-          <Text style={styles.temp}>{this.state.question}</Text>
-        </Svg>
 
 
-        <Slider
-          minimumValue={0}
-          maximumValue={15}
-          minimumTrackTintColor="#1EB1FC"
-          maximumTractTintColor="#1EB1FC"
-          step={1}
-          value={0}
-          onValueChange={value => this.onValueChange(value)}
-          style={styles.slider}
-          thumbTintColor="#1EB1FC"
-        />
-
+        </View>
       </View>
     );
   }
@@ -172,18 +180,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
   },
+  overlay: {
+    alignItems: 'center',
+    position: 'absolute',
+  },
   header: {
     fontSize: 30,
     marginBottom: 20,
-    // color: "white",
+    color: "white",
   },
   blurb: {
     textAlign: 'center',
-    fontSize: 18,
-    marginBottom: 10,
-  },
-  blurbTwo: {
-    textAlign: 'center',
+    color: 'white',
     fontSize: 18,
     marginBottom: 40,
   },
@@ -202,3 +210,187 @@ const styles = StyleSheet.create({
     width: WIDTH * .9,
   },
 });
+// [
+//   {
+//     "elementType": "geometry",
+//     "stylers": [
+//       {
+//         "color": "#f5f5f5"
+//       }
+//     ]
+//   },
+//   {
+//     "elementType": "labels",
+//     "stylers": [
+//       {
+//         "visibility": "off"
+//       }
+//     ]
+//   },
+//   {
+//     "elementType": "labels.icon",
+//     "stylers": [
+//       {
+//         "visibility": "off"
+//       }
+//     ]
+//   },
+//   {
+//     "elementType": "labels.text.fill",
+//     "stylers": [
+//       {
+//         "color": "#616161"
+//       }
+//     ]
+//   },
+//   {
+//     "elementType": "labels.text.stroke",
+//     "stylers": [
+//       {
+//         "color": "#f5f5f5"
+//       }
+//     ]
+//   },
+//   {
+//     "featureType": "administrative.land_parcel",
+//     "stylers": [
+//       {
+//         "visibility": "off"
+//       }
+//     ]
+//   },
+//   {
+//     "featureType": "administrative.land_parcel",
+//     "elementType": "labels.text.fill",
+//     "stylers": [
+//       {
+//         "color": "#bdbdbd"
+//       }
+//     ]
+//   },
+//   {
+//     "featureType": "administrative.neighborhood",
+//     "stylers": [
+//       {
+//         "visibility": "off"
+//       }
+//     ]
+//   },
+//   {
+//     "featureType": "poi",
+//     "elementType": "geometry",
+//     "stylers": [
+//       {
+//         "color": "#eeeeee"
+//       }
+//     ]
+//   },
+//   {
+//     "featureType": "poi",
+//     "elementType": "labels.text.fill",
+//     "stylers": [
+//       {
+//         "color": "#757575"
+//       }
+//     ]
+//   },
+//   {
+//     "featureType": "poi.park",
+//     "elementType": "geometry",
+//     "stylers": [
+//       {
+//         "color": "#e5e5e5"
+//       }
+//     ]
+//   },
+//   {
+//     "featureType": "poi.park",
+//     "elementType": "labels.text.fill",
+//     "stylers": [
+//       {
+//         "color": "#9e9e9e"
+//       }
+//     ]
+//   },
+//   {
+//     "featureType": "road",
+//     "elementType": "geometry",
+//     "stylers": [
+//       {
+//         "color": "#ffffff"
+//       }
+//     ]
+//   },
+//   {
+//     "featureType": "road.arterial",
+//     "elementType": "labels.text.fill",
+//     "stylers": [
+//       {
+//         "color": "#757575"
+//       }
+//     ]
+//   },
+//   {
+//     "featureType": "road.highway",
+//     "elementType": "geometry",
+//     "stylers": [
+//       {
+//         "color": "#dadada"
+//       }
+//     ]
+//   },
+//   {
+//     "featureType": "road.highway",
+//     "elementType": "labels.text.fill",
+//     "stylers": [
+//       {
+//         "color": "#616161"
+//       }
+//     ]
+//   },
+//   {
+//     "featureType": "road.local",
+//     "elementType": "labels.text.fill",
+//     "stylers": [
+//       {
+//         "color": "#9e9e9e"
+//       }
+//     ]
+//   },
+//   {
+//     "featureType": "transit.line",
+//     "elementType": "geometry",
+//     "stylers": [
+//       {
+//         "color": "#e5e5e5"
+//       }
+//     ]
+//   },
+//   {
+//     "featureType": "transit.station",
+//     "elementType": "geometry",
+//     "stylers": [
+//       {
+//         "color": "#eeeeee"
+//       }
+//     ]
+//   },
+//   {
+//     "featureType": "water",
+//     "elementType": "geometry",
+//     "stylers": [
+//       {
+//         "color": "#c9c9c9"
+//       }
+//     ]
+//   },
+//   {
+//     "featureType": "water",
+//     "elementType": "labels.text.fill",
+//     "stylers": [
+//       {
+//         "color": "#9e9e9e"
+//       }
+//     ]
+//   }
+// ]

@@ -1,8 +1,8 @@
 import React from 'react';
 import Expo from 'expo';
-import { StyleSheet, Text, View, Dimensions, Slider  } from 'react-native';
+import { Platform, StyleSheet, Text, View, Dimensions, Slider  } from 'react-native';
 import { SKY_KEY } from 'react-native-dotenv'
-import { Location, Svg, LinearGradient } from 'expo';
+import { Location, Svg, LinearGradient, Constants, Permissions } from 'expo';
 
 const HEIGHT = Dimensions.get('window').height;
 const WIDTH = Dimensions.get('window').width;
@@ -16,14 +16,33 @@ export default class App extends React.Component {
     this.state = {
       location: { coords: {latitude: 47.6205, longitude: -122.3493}},
       color: 'white',
+      errorMessage: null,
     }
   }
 
   componentDidMount(){
-    Location.watchPositionAsync(GEOLOCATION_OPTIONS, this.locationChanged);
+    if (Platform.OS === 'android' && !Constants.isDevice) {
+      this.setState({
+        errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device!',
+      });
+    } else {
+    this._getLocationAsync();
+    }
   }
 
-  locationChanged = (location) => {
+  _getLocationAsync = async () => {
+    let { status } = await Permissions.askAsync(Permissions.LOCATION);
+    if (status !== 'granted') {
+      this.setState({
+        errorMessage: 'Permission to access location was denied',
+      });
+    }
+
+    let location = await Location.getCurrentPositionAsync(GEOLOCATION_OPTIONS);
+    this.locationSet(location );
+  };
+
+  locationSet = (location) => {
     if (location) {
       let region = {
         latitude: location.coords.latitude,

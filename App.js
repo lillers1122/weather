@@ -123,7 +123,7 @@ export default class App extends React.Component {
       <View style={styles.main}>
       <MapView
         style={{ alignSelf: 'stretch', height: HEIGHT}}
-        initialRegion={{ latitude: 47.6205, longitude: -122.3493, latitudeDelta: 0.0222, longitudeDelta: 0.0121, }} />
+        region={{ latitude: 47.6205, longitude: -122.3493, latitudeDelta: 0.0222, longitudeDelta: 0.0121, }} />
 
         <LinearGradient
         colors={[this.state.color, 'white']}

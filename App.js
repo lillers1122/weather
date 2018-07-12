@@ -1,7 +1,8 @@
 import React from 'react';
 import Expo from 'expo';
-import { Platform, StyleSheet, Text, View, Dimensions, Slider  } from 'react-native';
+import { Platform, StyleSheet, Text, View, Image, Dimensions, Slider  } from 'react-native';
 import { SKY_KEY } from 'react-native-dotenv'
+// import logo from
 import { Location, Svg, LinearGradient, Constants, Permissions } from 'expo';
 
 const HEIGHT = Dimensions.get('window').height;
@@ -14,8 +15,8 @@ export default class App extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      location: { coords: {latitude: 47.6205, longitude: -122.3493}},
-      color: 'white',
+      location: { coords: {latitude: 0, longitude: 0}},
+      color: 'transparent',
       errorMessage: null,
     }
   }
@@ -165,8 +166,8 @@ export default class App extends React.Component {
           <View style={styles.overlay}>
 
           <Text style ={styles.header}>Weather</Text>
-          <Text style ={styles.header}>Here</Text>
-          <Text style ={styles.header}>Weather</Text>
+          <Text style ={styles.header2}>Here</Text>
+          <Text style ={styles.header3}>Weather</Text>
           <Text style={styles.time}>{this.state.question2}</Text>
 
           <Svg height='100' width='100' style={{alignItems: "center", justifyContent: 'center'}}>
@@ -192,6 +193,8 @@ export default class App extends React.Component {
             style={styles.slider}
             thumbTintColor="#1EB1FC"
           />
+          <Image source={require('./assets/poweredby-darksky.png')} style={{width: '65%', height: '6%', opacity: .25}}/>
+
         </View>
       </View>
     );
@@ -209,15 +212,19 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
   header: {
+    fontSize: 60,
+    marginBottom: 20,
+    color: "white",
+  },
+  header2: {
     fontSize: 45,
     marginBottom: 20,
     color: "white",
   },
-  blurb: {
-    textAlign: 'center',
-    color: 'white',
-    fontSize: 30,
-    marginBottom: 30,
+  header3: {
+    fontSize: 40,
+    marginBottom: 20,
+    color: "white",
   },
   time: {
     marginTop: 20,

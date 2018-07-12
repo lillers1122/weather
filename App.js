@@ -44,6 +44,7 @@ export default class App extends React.Component {
       latitude: location.coords.latitude,
       longitude: location.coords.longitude,
     });
+    console.log(this.state.location);
     console.log(this.state.latitude);
     console.log(this.state.longitude);
     this.getWeatherData(location.coords.latitude.toString(),location.coords.longitude.toString());
@@ -162,7 +163,7 @@ export default class App extends React.Component {
     console.log(typeof this.state.latitude);
     // console.log(this.state.latitude);
     // console.log(this.state.tempHourly);
-    let lat =this.state.latitude
+    let lat = this.state.latitude
     let long = this.state.longitude
 
     // console.log(LAT);
@@ -181,7 +182,7 @@ export default class App extends React.Component {
       <View style={styles.main}>
       <MapView
         style={{ alignSelf: 'stretch', height: HEIGHT}}
-        initialRegion={{ latitude: lat, longitude: long, latitudeDelta: 0.1222, longitudeDelta: 0.1121, }} />
+        initialRegion={{ latitude: this.state.latitude, longitude: this.state.longitude, latitudeDelta: 0.1222, longitudeDelta: 0.1121, }} />
         <LinearGradient
         colors={[this.state.color, 'white']}
           style={{

@@ -60,7 +60,6 @@ export default class App extends React.Component {
           console.error(error);
         });
     }
-
   }
 
   onValueChange(value) {
@@ -204,6 +203,7 @@ const styles = StyleSheet.create({
   time: {
     marginTop: 20,
     fontSize: 30,
+    fontWeight: 'bold',
     marginBottom: 20,
     color: "white",
   },

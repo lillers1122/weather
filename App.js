@@ -1,48 +1,66 @@
 import React from 'react';
-import { ActivityIndicator, StyleSheet, Text, View, Dimensions, Slider  } from 'react-native';
+import Expo from 'expo';
+import { StyleSheet, Text, View, Dimensions, Slider  } from 'react-native';
 import { SKY_KEY } from 'react-native-dotenv'
-import { Svg, LinearGradient, MapView } from 'expo';
+import { Location, Svg, LinearGradient } from 'expo';
 
-const { Circle } = Svg;
 const HEIGHT = Dimensions.get('window').height;
 const WIDTH = Dimensions.get('window').width;
+const GEOLOCATION_OPTIONS = { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 };
 const KEY = SKY_KEY
+const { Circle } = Svg;
 
 export default class App extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      isLoading: true,
+      location: { coords: {latitude: 47.6205, longitude: -122.3493}},
+      color: 'white',
     }
   }
 
   componentDidMount(){
-    let url = 'https://api.darksky.net/forecast/' + KEY + '/47.6205,-122.3493?exclude=minutely,daily,flags'
-    return fetch(url)
-      .then((response) => response.json())
-      .then((responseJson) => {
-        console.log(responseJson.currently.time);
-        let time = (new Date(responseJson.currently.time * 1000)).toString()
-        let tempHours = responseJson.hourly.data.map((item)=>(new Date(item.time * 1000)).toString().slice(15,21))
-        let allTemps = responseJson.hourly.data.map((item)=>(item.apparentTemperature))
-        console.log(tempHours);
+    Location.watchPositionAsync(GEOLOCATION_OPTIONS, this.locationChanged);
+  }
 
-        this.setState({
-          isLoading: false,
-          dataSource: responseJson,
-          tempHourly: allTemps,
-          tempTime: tempHours,
-          color: this.pickColor(Math.round(allTemps[0])),
-          question: Math.round(allTemps[0]),
-          question2: "NOW",
-          date: time,
-        }, function(){
+  locationChanged = (location) => {
+    if (location) {
+      let region = {
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        latitudeDelta: 0.014,
+        longitudeDelta: 0.015,
+      }
+
+      let url = 'https://api.darksky.net/forecast/' + KEY + '/' + location.coords.latitude + ',' + location.coords.longitude + '?exclude=minutely,daily,flags'
+      console.log(url);
+
+      return fetch(url)
+        .then((response) => response.json())
+        .then((responseJson) => {
+          let time = (new Date(responseJson.currently.time * 1000)).toString()
+          let tempHours = responseJson.hourly.data.map((item) => (new Date(item.time * 1000)).toString().slice(15,21))
+          let allTemps = responseJson.hourly.data.map((item) => (item.apparentTemperature))
+
+          this.setState({
+            isLoading: false,
+            dataSource: responseJson,
+            tempHourly: allTemps,
+            tempTime: tempHours,
+            color: this.pickColor(Math.round(allTemps[0])),
+            question: Math.round(allTemps[0]),
+            question2: "NOW",
+            date: time,
+            location: location,
+            region: region,
+          });
+
+        })
+        .catch((error) =>{
+          console.error(error);
         });
+    }
 
-      })
-      .catch((error) =>{
-        console.error(error);
-      });
   }
 
   onValueChange(value) {
@@ -108,25 +126,16 @@ export default class App extends React.Component {
   }
 
   render(){
-    console.log("hello");
-    console.log(this.state.tempHourly);
-
-    if(this.state.isLoading){
-      return(
-        <View style={{flex: 1, padding: 20}}>
-          <ActivityIndicator/>
-        </View>
-      )
-    }
+    console.log("hello, friend!");
 
     return(
       <View style={styles.main}>
-      <MapView
-        style={{ alignSelf: 'stretch', height: HEIGHT}}
-        region={{ latitude: 47.6205, longitude: -122.3493, latitudeDelta: 0.0222, longitudeDelta: 0.0121, }} />
+        <Expo.MapView
+          style={{ alignSelf: 'stretch', height: HEIGHT}}
+          region={this.state.region}/>
 
         <LinearGradient
-        colors={[this.state.color, 'white']}
+          colors={[this.state.color, 'white']}
           style={{
             position: 'absolute',
             left: 0,
@@ -136,7 +145,6 @@ export default class App extends React.Component {
             opacity: .80,
           }}/>
           <View style={styles.overlay}>
-
 
           <Text style ={styles.header}>Weather</Text>
           <Text style ={styles.header}>Here</Text>
@@ -155,7 +163,6 @@ export default class App extends React.Component {
             <Text style={styles.temp}>{this.state.question}</Text>
           </Svg>
 
-
           <Slider
             minimumValue={0}
             maximumValue={15}
@@ -167,8 +174,6 @@ export default class App extends React.Component {
             style={styles.slider}
             thumbTintColor="#1EB1FC"
           />
-
-
         </View>
       </View>
     );

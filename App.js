@@ -1,59 +1,29 @@
 import React from 'react';
-import { Platform, ActivityIndicator, StyleSheet, Text, View, Dimensions, Slider  } from 'react-native';
+import Expo from 'expo';
+import { ActivityIndicator, StyleSheet, Text, View, Dimensions, Slider  } from 'react-native';
 import { SKY_KEY } from 'react-native-dotenv'
-import { Svg, LinearGradient, MapView, Constants, Location, Permissions } from 'expo';
+import { Location, Svg, LinearGradient } from 'expo';
 
-const { Circle } = Svg;
 const HEIGHT = Dimensions.get('window').height;
 const WIDTH = Dimensions.get('window').width;
+const GEOLOCATION_OPTIONS = { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 };
 const KEY = SKY_KEY
+const { Circle } = Svg;
 
 export default class App extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      location: null,
-      errorMessage: null,
-      latitude: 47.6205,
-      longitude: -122.3493,
+      isLoading: true,
+      location: { coords: {latitude: 0, longitude: 0}},
       color: 'white',
     }
   }
 
   componentDidMount(){
-    if (Platform.OS === 'android' && !Constants.isDevice) {
-      this.setState({
-        errorMessage: 'Oops, error!',
-      });
-    } else {
-      this._getLocationAsync();
-    }
-  }
+    Location.watchPositionAsync(GEOLOCATION_OPTIONS, this.locationChanged);
 
-  _getLocationAsync = async () => {
-    let { status } = await Permissions.askAsync(Permissions.LOCATION);
-    if (status !== 'granted') {
-      this.setState({
-        errorMessage: 'Permission to access location was denied',
-      });
-    }
-
-    let location = await Location.getCurrentPositionAsync({});
-    this.setState({
-      location: location,
-      latitude: location.coords.latitude,
-      longitude: location.coords.longitude,
-    });
-    console.log(this.state.location);
-    console.log(this.state.latitude);
-    console.log(this.state.longitude);
-    this.getWeatherData(location.coords.latitude.toString(),location.coords.longitude.toString());
-
-
-  };
-
-  getWeatherData = (lat, long) => {
-    let url = 'https://api.darksky.net/forecast/' + KEY + '/'+ lat + ',' + long + '?exclude=minutely,daily,flags'
+    let url = 'https://api.darksky.net/forecast/' + KEY + '/47.6205,-122.3493?exclude=minutely,daily,flags'
     return fetch(url)
       .then((response) => response.json())
       .then((responseJson) => {
@@ -61,6 +31,7 @@ export default class App extends React.Component {
         let time = (new Date(responseJson.currently.time * 1000)).toString()
         let tempHours = responseJson.hourly.data.map((item)=>(new Date(item.time * 1000)).toString().slice(15,21))
         let allTemps = responseJson.hourly.data.map((item)=>(item.apparentTemperature))
+        console.log(tempHours);
 
         this.setState({
           isLoading: false,
@@ -78,6 +49,16 @@ export default class App extends React.Component {
       .catch((error) =>{
         console.error(error);
       });
+  }
+
+  locationChanged = (location) => {
+    let region = {
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
+      latitudeDelta: 0.1,
+      longitudeDelta: 0.05,
+    }
+    this.setState({location, region})
   }
 
   onValueChange(value) {
@@ -142,35 +123,11 @@ export default class App extends React.Component {
     }
   }
 
-  // getMap() {
-  //   console.log(this.state.latitude);
-  //
-  //   if (this.state.latitude) {
-  //     let LAT = parseFloat(this.state.latitude);
-  //     let LONG = parseFloat(this.state.longitude);
-  //     return (
-  //       <MapView
-  //         style={{ alignSelf: 'stretch', height: HEIGHT}}
-  //         initialRegion={{ latitude: LAT, longitude: LONG, latitudeDelta: 0.0222, longitudeDelta: 0.0121, }} />
-  //     )
-  //   } else {
-  //     console.log('MAP ERROR');
-  //   }
-  // }
-
   render(){
     console.log("hello");
-    console.log(typeof this.state.latitude);
-    // console.log(this.state.latitude);
-    // console.log(this.state.tempHourly);
-    let lat = this.state.latitude
-    let long = this.state.longitude
-
-    // console.log(LAT);
-    // console.log(LONG);
+    console.log(this.state.tempHourly);
 
     if(this.state.isLoading){
-      console.log(this.state);
       return(
         <View style={{flex: 1, padding: 20}}>
           <ActivityIndicator/>
@@ -180,21 +137,21 @@ export default class App extends React.Component {
 
     return(
       <View style={styles.main}>
-      <MapView
-        style={{ alignSelf: 'stretch', height: HEIGHT}}
-        initialRegion={{ latitude: this.state.latitude, longitude: this.state.longitude, latitudeDelta: 0.1222, longitudeDelta: 0.1121, }} />
+        <Expo.MapView
+          style={{ alignSelf: 'stretch', height: HEIGHT}}
+          region={this.state.region}/>
+
         <LinearGradient
-        colors={[this.state.color, 'white']}
+          colors={[this.state.color, 'white']}
           style={{
             position: 'absolute',
             left: 0,
             right: 0,
             top: 0,
             height: '100%',
-            opacity: .75,
+            opacity: .80,
           }}/>
           <View style={styles.overlay}>
-
 
           <Text style ={styles.header}>Weather</Text>
           <Text style ={styles.header}>Here</Text>
@@ -213,7 +170,6 @@ export default class App extends React.Component {
             <Text style={styles.temp}>{this.state.question}</Text>
           </Svg>
 
-
           <Slider
             minimumValue={0}
             maximumValue={15}
@@ -225,7 +181,6 @@ export default class App extends React.Component {
             style={styles.slider}
             thumbTintColor="#1EB1FC"
           />
-
         </View>
       </View>
     );
@@ -269,3 +224,187 @@ const styles = StyleSheet.create({
     width: WIDTH * .9,
   },
 });
+// [
+//   {
+//     "elementType": "geometry",
+//     "stylers": [
+//       {
+//         "color": "#f5f5f5"
+//       }
+//     ]
+//   },
+//   {
+//     "elementType": "labels",
+//     "stylers": [
+//       {
+//         "visibility": "off"
+//       }
+//     ]
+//   },
+//   {
+//     "elementType": "labels.icon",
+//     "stylers": [
+//       {
+//         "visibility": "off"
+//       }
+//     ]
+//   },
+//   {
+//     "elementType": "labels.text.fill",
+//     "stylers": [
+//       {
+//         "color": "#616161"
+//       }
+//     ]
+//   },
+//   {
+//     "elementType": "labels.text.stroke",
+//     "stylers": [
+//       {
+//         "color": "#f5f5f5"
+//       }
+//     ]
+//   },
+//   {
+//     "featureType": "administrative.land_parcel",
+//     "stylers": [
+//       {
+//         "visibility": "off"
+//       }
+//     ]
+//   },
+//   {
+//     "featureType": "administrative.land_parcel",
+//     "elementType": "labels.text.fill",
+//     "stylers": [
+//       {
+//         "color": "#bdbdbd"
+//       }
+//     ]
+//   },
+//   {
+//     "featureType": "administrative.neighborhood",
+//     "stylers": [
+//       {
+//         "visibility": "off"
+//       }
+//     ]
+//   },
+//   {
+//     "featureType": "poi",
+//     "elementType": "geometry",
+//     "stylers": [
+//       {
+//         "color": "#eeeeee"
+//       }
+//     ]
+//   },
+//   {
+//     "featureType": "poi",
+//     "elementType": "labels.text.fill",
+//     "stylers": [
+//       {
+//         "color": "#757575"
+//       }
+//     ]
+//   },
+//   {
+//     "featureType": "poi.park",
+//     "elementType": "geometry",
+//     "stylers": [
+//       {
+//         "color": "#e5e5e5"
+//       }
+//     ]
+//   },
+//   {
+//     "featureType": "poi.park",
+//     "elementType": "labels.text.fill",
+//     "stylers": [
+//       {
+//         "color": "#9e9e9e"
+//       }
+//     ]
+//   },
+//   {
+//     "featureType": "road",
+//     "elementType": "geometry",
+//     "stylers": [
+//       {
+//         "color": "#ffffff"
+//       }
+//     ]
+//   },
+//   {
+//     "featureType": "road.arterial",
+//     "elementType": "labels.text.fill",
+//     "stylers": [
+//       {
+//         "color": "#757575"
+//       }
+//     ]
+//   },
+//   {
+//     "featureType": "road.highway",
+//     "elementType": "geometry",
+//     "stylers": [
+//       {
+//         "color": "#dadada"
+//       }
+//     ]
+//   },
+//   {
+//     "featureType": "road.highway",
+//     "elementType": "labels.text.fill",
+//     "stylers": [
+//       {
+//         "color": "#616161"
+//       }
+//     ]
+//   },
+//   {
+//     "featureType": "road.local",
+//     "elementType": "labels.text.fill",
+//     "stylers": [
+//       {
+//         "color": "#9e9e9e"
+//       }
+//     ]
+//   },
+//   {
+//     "featureType": "transit.line",
+//     "elementType": "geometry",
+//     "stylers": [
+//       {
+//         "color": "#e5e5e5"
+//       }
+//     ]
+//   },
+//   {
+//     "featureType": "transit.station",
+//     "elementType": "geometry",
+//     "stylers": [
+//       {
+//         "color": "#eeeeee"
+//       }
+//     ]
+//   },
+//   {
+//     "featureType": "water",
+//     "elementType": "geometry",
+//     "stylers": [
+//       {
+//         "color": "#c9c9c9"
+//       }
+//     ]
+//   },
+//   {
+//     "featureType": "water",
+//     "elementType": "labels.text.fill",
+//     "stylers": [
+//       {
+//         "color": "#9e9e9e"
+//       }
+//     ]
+//   }
+// ]

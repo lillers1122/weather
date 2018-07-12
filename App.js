@@ -1,7 +1,7 @@
 import React from 'react';
-import { ActivityIndicator, StyleSheet, Text, View, Dimensions, Slider  } from 'react-native';
+import { Platform, ActivityIndicator, StyleSheet, Text, View, Dimensions, Slider  } from 'react-native';
 import { SKY_KEY } from 'react-native-dotenv'
-import { Svg, LinearGradient, MapView } from 'expo';
+import { Svg, LinearGradient, MapView, Constants, Location, Permissions } from 'expo';
 
 const { Circle } = Svg;
 const HEIGHT = Dimensions.get('window').height;
@@ -12,12 +12,47 @@ export default class App extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      isLoading: true,
+      location: null,
+      errorMessage: null,
+      latitude: 47.6205,
+      longitude: -122.3493,
+      color: 'white',
     }
   }
 
   componentDidMount(){
-    let url = 'https://api.darksky.net/forecast/' + KEY + '/47.6205,-122.3493?exclude=minutely,daily,flags'
+    if (Platform.OS === 'android' && !Constants.isDevice) {
+      this.setState({
+        errorMessage: 'Oops, error!',
+      });
+    } else {
+      this._getLocationAsync();
+    }
+  }
+
+  _getLocationAsync = async () => {
+    let { status } = await Permissions.askAsync(Permissions.LOCATION);
+    if (status !== 'granted') {
+      this.setState({
+        errorMessage: 'Permission to access location was denied',
+      });
+    }
+
+    let location = await Location.getCurrentPositionAsync({});
+    this.setState({
+      location: location,
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
+    });
+    console.log(this.state.latitude);
+    console.log(this.state.longitude);
+    this.getWeatherData(location.coords.latitude.toString(),location.coords.longitude.toString());
+
+
+  };
+
+  getWeatherData = (lat, long) => {
+    let url = 'https://api.darksky.net/forecast/' + KEY + '/'+ lat + ',' + long + '?exclude=minutely,daily,flags'
     return fetch(url)
       .then((response) => response.json())
       .then((responseJson) => {
@@ -25,7 +60,6 @@ export default class App extends React.Component {
         let time = (new Date(responseJson.currently.time * 1000)).toString()
         let tempHours = responseJson.hourly.data.map((item)=>(new Date(item.time * 1000)).toString().slice(15,21))
         let allTemps = responseJson.hourly.data.map((item)=>(item.apparentTemperature))
-        console.log(tempHours);
 
         this.setState({
           isLoading: false,
@@ -107,11 +141,35 @@ export default class App extends React.Component {
     }
   }
 
+  // getMap() {
+  //   console.log(this.state.latitude);
+  //
+  //   if (this.state.latitude) {
+  //     let LAT = parseFloat(this.state.latitude);
+  //     let LONG = parseFloat(this.state.longitude);
+  //     return (
+  //       <MapView
+  //         style={{ alignSelf: 'stretch', height: HEIGHT}}
+  //         initialRegion={{ latitude: LAT, longitude: LONG, latitudeDelta: 0.0222, longitudeDelta: 0.0121, }} />
+  //     )
+  //   } else {
+  //     console.log('MAP ERROR');
+  //   }
+  // }
+
   render(){
     console.log("hello");
-    console.log(this.state.tempHourly);
+    console.log(typeof this.state.latitude);
+    // console.log(this.state.latitude);
+    // console.log(this.state.tempHourly);
+    let lat =this.state.latitude
+    let long = this.state.longitude
+
+    // console.log(LAT);
+    // console.log(LONG);
 
     if(this.state.isLoading){
+      console.log(this.state);
       return(
         <View style={{flex: 1, padding: 20}}>
           <ActivityIndicator/>
@@ -123,8 +181,7 @@ export default class App extends React.Component {
       <View style={styles.main}>
       <MapView
         style={{ alignSelf: 'stretch', height: HEIGHT}}
-        initialRegion={{ latitude: 47.6205, longitude: -122.3493, latitudeDelta: 0.0222, longitudeDelta: 0.0121, }} />
-
+        initialRegion={{ latitude: lat, longitude: long, latitudeDelta: 0.1222, longitudeDelta: 0.1121, }} />
         <LinearGradient
         colors={[this.state.color, 'white']}
           style={{
@@ -133,7 +190,7 @@ export default class App extends React.Component {
             right: 0,
             top: 0,
             height: '100%',
-            opacity: .80,
+            opacity: .75,
           }}/>
           <View style={styles.overlay}>
 
@@ -167,7 +224,6 @@ export default class App extends React.Component {
             style={styles.slider}
             thumbTintColor="#1EB1FC"
           />
-
 
         </View>
       </View>
@@ -212,187 +268,3 @@ const styles = StyleSheet.create({
     width: WIDTH * .9,
   },
 });
-// [
-//   {
-//     "elementType": "geometry",
-//     "stylers": [
-//       {
-//         "color": "#f5f5f5"
-//       }
-//     ]
-//   },
-//   {
-//     "elementType": "labels",
-//     "stylers": [
-//       {
-//         "visibility": "off"
-//       }
-//     ]
-//   },
-//   {
-//     "elementType": "labels.icon",
-//     "stylers": [
-//       {
-//         "visibility": "off"
-//       }
-//     ]
-//   },
-//   {
-//     "elementType": "labels.text.fill",
-//     "stylers": [
-//       {
-//         "color": "#616161"
-//       }
-//     ]
-//   },
-//   {
-//     "elementType": "labels.text.stroke",
-//     "stylers": [
-//       {
-//         "color": "#f5f5f5"
-//       }
-//     ]
-//   },
-//   {
-//     "featureType": "administrative.land_parcel",
-//     "stylers": [
-//       {
-//         "visibility": "off"
-//       }
-//     ]
-//   },
-//   {
-//     "featureType": "administrative.land_parcel",
-//     "elementType": "labels.text.fill",
-//     "stylers": [
-//       {
-//         "color": "#bdbdbd"
-//       }
-//     ]
-//   },
-//   {
-//     "featureType": "administrative.neighborhood",
-//     "stylers": [
-//       {
-//         "visibility": "off"
-//       }
-//     ]
-//   },
-//   {
-//     "featureType": "poi",
-//     "elementType": "geometry",
-//     "stylers": [
-//       {
-//         "color": "#eeeeee"
-//       }
-//     ]
-//   },
-//   {
-//     "featureType": "poi",
-//     "elementType": "labels.text.fill",
-//     "stylers": [
-//       {
-//         "color": "#757575"
-//       }
-//     ]
-//   },
-//   {
-//     "featureType": "poi.park",
-//     "elementType": "geometry",
-//     "stylers": [
-//       {
-//         "color": "#e5e5e5"
-//       }
-//     ]
-//   },
-//   {
-//     "featureType": "poi.park",
-//     "elementType": "labels.text.fill",
-//     "stylers": [
-//       {
-//         "color": "#9e9e9e"
-//       }
-//     ]
-//   },
-//   {
-//     "featureType": "road",
-//     "elementType": "geometry",
-//     "stylers": [
-//       {
-//         "color": "#ffffff"
-//       }
-//     ]
-//   },
-//   {
-//     "featureType": "road.arterial",
-//     "elementType": "labels.text.fill",
-//     "stylers": [
-//       {
-//         "color": "#757575"
-//       }
-//     ]
-//   },
-//   {
-//     "featureType": "road.highway",
-//     "elementType": "geometry",
-//     "stylers": [
-//       {
-//         "color": "#dadada"
-//       }
-//     ]
-//   },
-//   {
-//     "featureType": "road.highway",
-//     "elementType": "labels.text.fill",
-//     "stylers": [
-//       {
-//         "color": "#616161"
-//       }
-//     ]
-//   },
-//   {
-//     "featureType": "road.local",
-//     "elementType": "labels.text.fill",
-//     "stylers": [
-//       {
-//         "color": "#9e9e9e"
-//       }
-//     ]
-//   },
-//   {
-//     "featureType": "transit.line",
-//     "elementType": "geometry",
-//     "stylers": [
-//       {
-//         "color": "#e5e5e5"
-//       }
-//     ]
-//   },
-//   {
-//     "featureType": "transit.station",
-//     "elementType": "geometry",
-//     "stylers": [
-//       {
-//         "color": "#eeeeee"
-//       }
-//     ]
-//   },
-//   {
-//     "featureType": "water",
-//     "elementType": "geometry",
-//     "stylers": [
-//       {
-//         "color": "#c9c9c9"
-//       }
-//     ]
-//   },
-//   {
-//     "featureType": "water",
-//     "elementType": "labels.text.fill",
-//     "stylers": [
-//       {
-//         "color": "#9e9e9e"
-//       }
-//     ]
-//   }
-// ]

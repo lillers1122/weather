@@ -198,9 +198,9 @@ export default class App extends React.Component {
               thumbTintColor="#1EB1FC"
             />
 
-            <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-              <Attribution />                
-            </View>
+
+              <Attribution />
+          
 
           </View>
         </View>

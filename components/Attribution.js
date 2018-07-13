@@ -27,10 +27,11 @@ class Attribution extends React.Component {
         style={{
           opacity: fadeAnim,
           width: 250,
-          height: 50
+          height: 50,
+          alignItems: 'center',
         }}
       >
-      <Image source={require('../assets/poweredby-darksky.png')} />
+      <Image source={require('../assets/poweredby-darksky.png')} style={{width: '80%', height: '80%', opacity: .25}}/>
       </Animated.View>
     );
   }

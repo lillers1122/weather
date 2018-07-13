@@ -1,38 +1,58 @@
 import React from 'react';
-import { Animated, Image } from 'react-native';
+import PropTypes from 'prop-types';
+import { Animated, Image, View } from 'react-native';
+
+const propTypes = {
+  source: PropTypes.object.isRequired,
+  styles: PropTypes.object.isRequired
+}
 
 class Attribution extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       fadeAnim: new Animated.Value(0),
+      image: props.source,
+      styles: props.styles
+
     };
   }
 
   componentDidMount() {
-    Animated.timing(
-      this.state.fadeAnim,
-      {
-        toValue: 1,
-        duration: 10000,
-      }
-    ).start()
+    Animated.sequence([
+      Animated.timing(
+        this.state.fadeAnim,
+        {
+          toValue: 1,
+          duration: 5000,
+      }),
+      Animated.timing(
+        this.state.fadeAnim,
+        {
+          toValue: 0,
+          duration: 10000,
+      }),
+
+    ]).start()
+
   }
 
   render() {
-    let {fadeAnim } = this.state;
+    let { fadeAnim, image, styles } = this.state;
 
     return (
-      <Animated.View
-        style={{
-          opacity: fadeAnim,
-          width: 250,
-          height: 50,
-          alignItems: 'center',
-        }}
-      >
-      <Image source={require('../assets/poweredby-darksky.png')} style={{width: '80%', height: '80%', opacity: .25}}/>
-      </Animated.View>
+      <View>
+        <Animated.View
+          style={{
+            opacity: fadeAnim,
+            width: 250,
+            height: 50,
+            alignItems: 'center',
+          }}
+        >
+        <Image source={image} style={styles}/>
+        </Animated.View>
+      </View>
     );
   }
 }

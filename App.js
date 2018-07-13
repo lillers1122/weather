@@ -1,6 +1,6 @@
 import React from 'react';
 import Expo from 'expo';
-import { Platform, StyleSheet, Text, View, Image, Dimensions, Slider  } from 'react-native';
+import { Platform, StyleSheet, Text, View, Dimensions, Slider  } from 'react-native';
 import { SKY_KEY } from 'react-native-dotenv'
 import { Location, Svg, LinearGradient, Constants, Permissions } from 'expo';
 import Attribution from './components/Attribution';
@@ -16,7 +16,6 @@ export default class App extends React.Component {
     super(props);
     this.state = {
       isReady: false,
-      // location: { coords: {latitude: 0, longitude: 0}},
       color: 'pink',
       errorMessage: null,
       waiting: '1',
@@ -198,9 +197,9 @@ export default class App extends React.Component {
               thumbTintColor="#1EB1FC"
             />
 
+            <Attribution source={require('./assets/dark-sky-google.png')} styles={{width: '95%', height: '50%', marginTop: 15, opacity: .85}} />
 
-              <Attribution />
-          
+            <Text style={styles.credits}>Small Talk Enterprises</Text>
 
           </View>
         </View>
@@ -252,6 +251,9 @@ const styles = StyleSheet.create({
     marginTop: HEIGHT * 0.15,
     width: WIDTH * .9,
   },
+  credits: {
+    color: 'gray',
+  }
 });
 // [
 //   {

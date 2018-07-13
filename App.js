@@ -2,7 +2,6 @@ import React from 'react';
 import Expo from 'expo';
 import { Platform, StyleSheet, Text, View, Image, Dimensions, Slider  } from 'react-native';
 import { SKY_KEY } from 'react-native-dotenv'
-// import logo from
 import { Location, Svg, LinearGradient, Constants, Permissions } from 'expo';
 
 const HEIGHT = Dimensions.get('window').height;
@@ -15,9 +14,11 @@ export default class App extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      location: { coords: {latitude: 0, longitude: 0}},
-      color: 'transparent',
+      isReady: false,
+      // location: { coords: {latitude: 0, longitude: 0}},
+      color: 'pink',
       errorMessage: null,
+      waiting: '1',
     }
   }
 
@@ -55,9 +56,11 @@ export default class App extends React.Component {
       let url = 'https://api.darksky.net/forecast/' + KEY + '/' + location.coords.latitude + ',' + location.coords.longitude + '?exclude=minutely,daily,flags'
       console.log(url);
 
+
       return fetch(url)
         .then((response) => response.json())
         .then((responseJson) => {
+          console.log(responseJson);
           let time = (new Date(responseJson.currently.time * 1000)).toString()
           let tempHours = responseJson.hourly.data.map((item) => (new Date(item.time * 1000)).toString().slice(15,21))
           let allTemps = responseJson.hourly.data.map((item) => (item.apparentTemperature))
@@ -147,56 +150,56 @@ export default class App extends React.Component {
   render(){
     console.log("hello, friend!");
 
-    return(
-      <View style={styles.main}>
-        <Expo.MapView
-          style={{ alignSelf: 'stretch', height: HEIGHT}}
-          region={this.state.region}/>
+    return (
+        <View style={styles.main}>
+          <Expo.MapView
+            style={{ alignSelf: 'stretch', height: HEIGHT}}
+            region={this.state.region}/>
 
-        <LinearGradient
-          colors={[this.state.color, 'white']}
-          style={{
-            position: 'absolute',
-            left: 0,
-            right: 0,
-            top: 0,
-            height: '100%',
-            opacity: .80,
-          }}/>
-          <View style={styles.overlay}>
+          <LinearGradient
+            colors={[this.state.color, 'white']}
+            style={{
+              position: 'absolute',
+              left: 0,
+              right: 0,
+              top: 0,
+              height: '100%',
+              opacity: .80,
+            }}/>
+            <View style={styles.overlay}>
 
-          <Text style ={styles.header}>Weather</Text>
-          <Text style ={styles.header2}>Here</Text>
-          <Text style ={styles.header3}>Weather</Text>
-          <Text style={styles.time}>{this.state.question2}</Text>
+            <Text style ={styles.header}>Weather</Text>
+            <Text style ={styles.header2}>Here</Text>
+            <Text style ={styles.header3}>Weather</Text>
+            <Text style={styles.time}>{this.state.question2}</Text>
 
-          <Svg height='100' width='100' style={{alignItems: "center", justifyContent: 'center'}}>
-            <Circle
-              cx='50'
-              cy='50'
-              r='45'
-              stroke='pink'
-              strokeWidth='2.5'
-              fill={this.state.color}
+            <Svg height='100' width='100' style={{alignItems: "center", justifyContent: 'center'}}>
+              <Circle
+                cx='50'
+                cy='50'
+                r='45'
+                stroke='pink'
+                strokeWidth='2.5'
+                fill={this.state.color}
+              />
+              <Text style={styles.temp}>{this.state.question}</Text>
+            </Svg>
+
+            <Slider
+              minimumValue={0}
+              maximumValue={15}
+              minimumTrackTintColor="#1EB1FC"
+              maximumTractTintColor="#1EB1FC"
+              step={1}
+              value={0}
+              onValueChange={value => this.onValueChange(value)}
+              style={styles.slider}
+              thumbTintColor="#1EB1FC"
             />
-            <Text style={styles.temp}>{this.state.question}</Text>
-          </Svg>
+            <Image source={require('./assets/poweredby-darksky.png')} style={{width: '65%', height: '6%', opacity: .25}}/>
 
-          <Slider
-            minimumValue={0}
-            maximumValue={15}
-            minimumTrackTintColor="#1EB1FC"
-            maximumTractTintColor="#1EB1FC"
-            step={1}
-            value={0}
-            onValueChange={value => this.onValueChange(value)}
-            style={styles.slider}
-            thumbTintColor="#1EB1FC"
-          />
-          <Image source={require('./assets/poweredby-darksky.png')} style={{width: '65%', height: '6%', opacity: .25}}/>
-
+          </View>
         </View>
-      </View>
     );
   }
 }

@@ -3,6 +3,7 @@ import Expo from 'expo';
 import { Platform, StyleSheet, Text, View, Image, Dimensions, Slider  } from 'react-native';
 import { SKY_KEY } from 'react-native-dotenv'
 import { Location, Svg, LinearGradient, Constants, Permissions } from 'expo';
+import Attribution from './components/Attribution';
 
 const HEIGHT = Dimensions.get('window').height;
 const WIDTH = Dimensions.get('window').width;
@@ -196,7 +197,10 @@ export default class App extends React.Component {
               style={styles.slider}
               thumbTintColor="#1EB1FC"
             />
-            <Image source={require('./assets/poweredby-darksky.png')} style={{width: '65%', height: '6%', opacity: .25}}/>
+
+            <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+              <Attribution />                
+            </View>
 
           </View>
         </View>

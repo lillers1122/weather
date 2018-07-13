@@ -1,19 +1,37 @@
-import React, { Component } from 'react';
-import { Animated } from 'react-native';
+import React from 'react';
+import { Animated, Image } from 'react-native';
 
-class Attribution extends Component {
+class Attribution extends React.Component {
   constructor(props) {
     super(props);
-
     this.state = {
-      color: 'pink',
+      fadeAnim: new Animated.Value(0),
     };
   }
 
+  componentDidMount() {
+    Animated.timing(
+      this.state.fadeAnim,
+      {
+        toValue: 1,
+        duration: 10000,
+      }
+    ).start()
+  }
+
   render() {
-    TEST
+    let {fadeAnim } = this.state;
+
     return (
-      <Animated.View />
+      <Animated.View
+        style={{
+          opacity: fadeAnim,
+          width: 250,
+          height: 50
+        }}
+      >
+      <Image source={require('../assets/poweredby-darksky.png')} />
+      </Animated.View>
     );
   }
 }

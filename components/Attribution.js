@@ -11,7 +11,7 @@ class Attribution extends Component {
   }
 
   render() {
-    
+    TEST
     return (
       <Animated.View />
     );

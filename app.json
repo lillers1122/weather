@@ -1,12 +1,12 @@
 {
   "expo": {
     "name": "WeatherNow",
-    "icon": "./assets/WeatherNow.png",
+    "icon": "./assets/cloud.png",
     "version": "1.0.0",
-    "slug": "weather-now",
+    "slug": "your-app-slug",
     "sdkVersion": "27.0.0",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/splash5.png",
       "resizeMode": "cover"
     },
     "ios": {

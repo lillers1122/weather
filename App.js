@@ -56,20 +56,19 @@ export default class App extends React.Component {
       let url = 'https://api.darksky.net/forecast/' + KEY + '/' + location.coords.latitude + ',' + location.coords.longitude + '?exclude=minutely,daily,flags,alerts'
       console.log(url);
 
-
       return fetch(url)
         .then((response) => response.json())
         .then((responseJson) => {
-          console.log(responseJson);
-          let time = (new Date(responseJson.currently.time * 1000)).toString()
-          let tempHours = responseJson.hourly.data.map((item) => (new Date(item.time * 1000)).toString().slice(15,21))
+          let tZone = responseJson.timezone;
+          let time = ((new Date(responseJson.currently.time * 1000)).toLocaleTimeString('en-US', { timeZone: tZone, hour: '2-digit', hour12: true }));
+          let tempHours = responseJson.hourly.data.map((item) => (new Date(item.time * 1000)).toLocaleTimeString('en-US', { timeZone: tZone, hour: '2-digit', hour12: true }))
           let allTemps = responseJson.hourly.data.map((item) => (item.apparentTemperature))
 
           this.setState({
             isLoading: false,
             dataSource: responseJson,
             tempHourly: allTemps,
-            tempTime: tempHours,
+            tempTimes: tempHours,
             color: this.pickColor(Math.round(allTemps[0])),
             question: Math.round(allTemps[0]),
             question2: "NOW",
@@ -77,7 +76,6 @@ export default class App extends React.Component {
             location: location,
             region: region,
           });
-
         })
         .catch((error) =>{
           console.error(error);
@@ -86,9 +84,7 @@ export default class App extends React.Component {
   }
 
   onValueChange(value) {
-    let temp = this.state.tempHourly[value]
-    let tempIndicator = Math.round(temp)
-
+    let tempIndicator = Math.round(this.state.tempHourly[value])
     let time = this.pickTime(value)
     let chosen = this.pickColor(tempIndicator)
 
@@ -96,23 +92,11 @@ export default class App extends React.Component {
   }
 
   pickTime(value) {
-    let time = parseInt(this.state.tempTime[value]);
-    let now = this.state.date.slice(16,18)
-
-    if (time == now) {
-      time = "NOW"
-    } else if (time > 12) {
-      time -= 12
-      time += " PM"
-    } else if (time === 0) {
-      time = "12 AM"
-    } else if (time === 12) {
-      time = " 12 PM"
+    if (this.state.tempTimes[value] == this.state.date) {
+      return "NOW"
     } else {
-      time += " AM"
+      return this.state.tempTimes[value]
     }
-
-    return time
   }
 
   pickColor(temperature) {

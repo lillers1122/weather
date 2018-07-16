@@ -70,8 +70,8 @@ export default class App extends React.Component {
             tempHourly: allTemps,
             tempTimes: tempHours,
             color: this.pickColor(Math.round(allTemps[0])),
-            question: Math.round(allTemps[0]),
-            question2: "NOW",
+            displayTemp: Math.round(allTemps[0]),
+            displayTime: "NOW",
             date: time,
             location: location,
             region: region,
@@ -88,7 +88,7 @@ export default class App extends React.Component {
     let time = this.pickTime(value)
     let chosen = this.pickColor(tempIndicator)
 
-    this.setState({ question: tempIndicator, question2: time, color: chosen });
+    this.setState({ displayTemp: tempIndicator, displayTime: time, color: chosen });
   }
 
   pickTime(value) {
@@ -155,7 +155,7 @@ export default class App extends React.Component {
             <Text style ={styles.header}>Weather</Text>
             <Text style ={styles.header2}>Here</Text>
             <Text style ={styles.header3}>Weather</Text>
-            <Text style={styles.time}>{this.state.question2}</Text>
+            <Text style={styles.time}>{this.state.displayTime}</Text>
 
             <Svg height='100' width='100' style={{alignItems: "center", justifyContent: 'center'}}>
               <Circle
@@ -166,7 +166,7 @@ export default class App extends React.Component {
                 strokeWidth='2.5'
                 fill={this.state.color}
               />
-              <Text style={styles.temp}>{this.state.question}</Text>
+              <Text style={styles.temp}>{this.state.displayTemp}</Text>
             </Svg>
 
             <Slider
@@ -181,7 +181,7 @@ export default class App extends React.Component {
               thumbTintColor="#1EB1FC"
             />
 
-            <Attribution source={require('./assets/poweredby-darksky.png')} styles={{width: '100%', height: '65%', marginTop: 15, opacity: .85}} />
+            <Attribution source={require('./assets/poweredby-darksky.png')} styles={{width: '100%', height: '65%', marginTop: 15, opacity: .65}} />
 
             <Text style={styles.credits}>Small Talk Enterprises</Text>
 

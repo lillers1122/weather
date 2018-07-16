@@ -30,7 +30,7 @@ class Attribution extends React.Component {
         this.state.fadeAnim,
         {
           toValue: 0,
-          duration: 10000,
+          duration: 15000,
       }),
 
     ]).start()

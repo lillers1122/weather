@@ -53,7 +53,7 @@ export default class App extends React.Component {
         longitudeDelta: 0.015,
       }
 
-      let url = 'https://api.darksky.net/forecast/' + KEY + '/' + location.coords.latitude + ',' + location.coords.longitude + '?exclude=minutely,daily,flags'
+      let url = 'https://api.darksky.net/forecast/' + KEY + '/' + location.coords.latitude + ',' + location.coords.longitude + '?exclude=minutely,daily,flags,alerts'
       console.log(url);
 
 
@@ -197,7 +197,7 @@ export default class App extends React.Component {
               thumbTintColor="#1EB1FC"
             />
 
-            <Attribution source={require('./assets/dark-sky-google.png')} styles={{width: '95%', height: '50%', marginTop: 15, opacity: .85}} />
+            <Attribution source={require('./assets/poweredby-darksky.png')} styles={{width: '100%', height: '65%', marginTop: 15, opacity: .85}} />
 
             <Text style={styles.credits}>Small Talk Enterprises</Text>
 

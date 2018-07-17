@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "MrSky",
+    "name": "Mr. Sky",
     "icon": "./assets/cloud.png",
     "version": "1.0.0",
     "slug": "mr-sky",
@@ -12,6 +12,7 @@
     "ios": {
       "bundleIdentifier": "com.smalltalkenterprises.mrsky"
     },
+    "orientation": "portrait",
   }
 
 }

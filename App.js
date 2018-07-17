@@ -1,8 +1,8 @@
 import React from 'react';
 import Expo from 'expo';
-import { Platform, StyleSheet, Text, View, Dimensions, Slider  } from 'react-native';
+import { Alert, StyleSheet, Text, View, Dimensions, Slider  } from 'react-native';
 import { SKY_KEY } from 'react-native-dotenv'
-import { Location, Svg, LinearGradient, Constants, Permissions } from 'expo';
+import { Location, Svg, LinearGradient, Permissions } from 'expo';
 import Attribution from './components/Attribution';
 
 const HEIGHT = Dimensions.get('window').height;
@@ -23,64 +23,83 @@ export default class App extends React.Component {
   }
 
   componentDidMount(){
-    if (Platform.OS === 'android' && !Constants.isDevice) {
-      this.setState({
-        errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device!',
-      });
-    } else {
-    this._getLocationAsync();
-    }
+    this.getLocationAsync();
   }
 
-  _getLocationAsync = async () => {
+  getLocationAsync = async () => {
     let { status } = await Permissions.askAsync(Permissions.LOCATION);
+    console.log(status);
     if (status !== 'granted') {
-      this.setState({
-        errorMessage: 'Permission to access location was denied',
-      });
+      Alert.alert('Permission to access location was denied! Here is information for Seattle.')
+      let defaultRegion = {
+        latitude: 47.6205,
+        longitude: -122.3493,
+        latitudeDelta: 0.054,
+        longitudeDelta: 0.055,
+      }
+      this.getData(defaultRegion)
+    } else {
+      console.log("test!");
+      let location = await Location.getCurrentPositionAsync(GEOLOCATION_OPTIONS);
+      console.log(location);
+      if (location) {
+        this.locationSet(location );
+      } else {
+        console.log("test!!!!!");
+        Alert.alert('Location error! Here is information for Seattle.')
+        let defaultRegion = {
+          latitude: 47.6205,
+          longitude: -122.3493,
+          latitudeDelta: 0.054,
+          longitudeDelta: 0.055,
+        }
+        this.getData(defaultRegion)
+      }
+
     }
 
-    let location = await Location.getCurrentPositionAsync(GEOLOCATION_OPTIONS);
-    this.locationSet(location );
   };
 
   locationSet = (location) => {
-    if (location) {
+    console.log('test');
+    if (location.coords ) {
       let region = {
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
         latitudeDelta: 0.014,
         longitudeDelta: 0.015,
       }
-
-      let url = 'https://api.darksky.net/forecast/' + KEY + '/' + location.coords.latitude + ',' + location.coords.longitude + '?exclude=minutely,daily,flags,alerts'
-      console.log(url);
-
-      return fetch(url)
-        .then((response) => response.json())
-        .then((responseJson) => {
-          let tZone = responseJson.timezone;
-          let time = ((new Date(responseJson.currently.time * 1000)).toLocaleTimeString('en-US', { timeZone: tZone, hour: '2-digit', hour12: true }));
-          let tempHours = responseJson.hourly.data.map((item) => (new Date(item.time * 1000)).toLocaleTimeString('en-US', { timeZone: tZone, hour: '2-digit', hour12: true }))
-          let allTemps = responseJson.hourly.data.map((item) => (item.apparentTemperature))
-
-          this.setState({
-            isLoading: false,
-            dataSource: responseJson,
-            tempHourly: allTemps,
-            tempTimes: tempHours,
-            color: this.pickColor(Math.round(allTemps[0])),
-            displayTemp: Math.round(allTemps[0]),
-            displayTime: "NOW",
-            date: time,
-            location: location,
-            region: region,
-          });
-        })
-        .catch((error) =>{
-          console.error(error);
-        });
+      this.getData(region)
     }
+  }
+
+  getData = (region) => {
+    let url = 'https://api.darksky.net/forecast/' + KEY + '/' + region.latitude + ',' + region.longitude + '?exclude=minutely,daily,flags,alerts'
+    console.log(url);
+
+    return fetch(url)
+      .then((response) => response.json())
+      .then((responseJson) => {
+        let tZone = responseJson.timezone;
+        let time = ((new Date(responseJson.currently.time * 1000)).toLocaleTimeString('en-US', { timeZone: tZone, hour: '2-digit', hour12: true }));
+        let tempHours = responseJson.hourly.data.map((item) => (new Date(item.time * 1000)).toLocaleTimeString('en-US', { timeZone: tZone, hour: '2-digit', hour12: true }))
+        let allTemps = responseJson.hourly.data.map((item) => (item.apparentTemperature))
+
+        this.setState({
+          isLoading: false,
+          dataSource: responseJson,
+          tempHourly: allTemps,
+          tempTimes: tempHours,
+          color: this.pickColor(Math.round(allTemps[0])),
+          displayTemp: Math.round(allTemps[0]),
+          displayTime: "NOW",
+          date: time,
+          region: region,
+        });
+      })
+      .catch((error) =>{
+        console.error(error);
+      });
   }
 
   onValueChange(value) {

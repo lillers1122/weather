@@ -147,7 +147,7 @@ export default class App extends React.Component {
               left: 0,
               right: 0,
               top: 0,
-              height: '100%',
+              height: '125%',
               opacity: .80,
             }}/>
             <View style={styles.overlay}>

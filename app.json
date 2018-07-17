@@ -1,16 +1,16 @@
 {
   "expo": {
-    "name": "WeatherNow",
+    "name": "MrSky",
     "icon": "./assets/cloud.png",
     "version": "1.0.0",
-    "slug": "your-app-slug",
+    "slug": "mr-sky",
     "sdkVersion": "27.0.0",
     "splash": {
-      "image": "./assets/splash5.png",
+      "image": "./assets/MS-splash.png",
       "resizeMode": "cover"
     },
     "ios": {
-      "bundleIdentifier": "com.smalltalkenterprises.weathernow"
+      "bundleIdentifier": "com.smalltalkenterprises.mrsky"
     },
   }
 

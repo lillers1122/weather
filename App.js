@@ -1,8 +1,8 @@
 import React from 'react';
 import Expo from 'expo';
-import { Alert, StyleSheet, Text, View, Dimensions, Slider  } from 'react-native';
+import { ActivityIndicator, Image, Alert, StyleSheet, Text, View, Dimensions, Slider  } from 'react-native';
 import { SKY_KEY } from 'react-native-dotenv'
-import { Location, Svg, LinearGradient, Permissions } from 'expo';
+import {  Location, Svg, LinearGradient, Permissions } from 'expo';
 import Attribution from './components/Attribution';
 
 const HEIGHT = Dimensions.get('window').height;
@@ -18,11 +18,10 @@ export default class App extends React.Component {
       isReady: false,
       color: 'pink',
       errorMessage: null,
-      waiting: '1',
     }
   }
 
-  componentDidMount(){
+  componentDidMount() {
     this.getLocationAsync();
   }
 
@@ -37,7 +36,7 @@ export default class App extends React.Component {
         latitudeDelta: 0.054,
         longitudeDelta: 0.055,
       }
-      this.getData(defaultRegion)
+      this.getData(defaultRegion);
     } else {
       console.log("test! 42");
       let location = await Location.getCurrentPositionAsync(GEOLOCATION_OPTIONS);
@@ -45,20 +44,8 @@ export default class App extends React.Component {
       console.log(location);
       if (location) {
         this.locationSet(location );
-      } else {
-        console.log("test!!!!!");
-        Alert.alert('Location error! Here is information for Seattle.')
-        let defaultRegion = {
-          latitude: 47.6205,
-          longitude: -122.3493,
-          latitudeDelta: 0.054,
-          longitudeDelta: 0.055,
-        }
-        this.getData(defaultRegion)
       }
-
     }
-
   };
 
   locationSet = (location) => {
@@ -96,6 +83,7 @@ export default class App extends React.Component {
           displayTime: "NOW",
           date: time,
           region: region,
+          isReady: true,
         });
       })
       .catch((error) =>{
@@ -154,62 +142,93 @@ export default class App extends React.Component {
   render(){
     console.log("hello, friend!");
 
-    return (
-        <View style={styles.main}>
-          <Expo.MapView
-            style={{ alignSelf: 'stretch', height: HEIGHT}}
-            region={this.state.region}/>
-
-          <LinearGradient
-            colors={[this.state.color, 'white']}
-            style={{
-              position: 'absolute',
-              left: 0,
-              right: 0,
-              top: 0,
-              height: '125%',
-              opacity: .80,
-            }}/>
-            <View style={styles.overlay}>
-
-            <Text style ={styles.header}>Weather</Text>
-            <Text style ={styles.header2}>Here</Text>
-            <Text style ={styles.header3}>Weather</Text>
-            <Text style={styles.time}>{this.state.displayTime}</Text>
-
-            <Svg height='100' width='100' style={{alignItems: "center", justifyContent: 'center'}}>
-              <Circle
-                cx='50'
-                cy='50'
-                r='45'
-                stroke='pink'
-                strokeWidth='2.5'
-                fill={this.state.color}
-              />
-              <Text style={styles.temp}>{this.state.displayTemp}</Text>
-            </Svg>
-
-            <Slider
-              minimumValue={0}
-              maximumValue={15}
-              minimumTrackTintColor="#1EB1FC"
-              maximumTractTintColor="#1EB1FC"
-              step={1}
-              value={0}
-              onValueChange={value => this.onValueChange(value)}
-              style={styles.slider}
-              thumbTintColor="#1EB1FC"
-            />
-
-            <Attribution source={require('./assets/poweredby-darksky.png')} styles={{width: '100%', height: '65%', marginTop: 15, opacity: .65}} />
-
-            <Text style={styles.credits}>Small Talk Enterprises</Text>
-
-          </View>
+    if (!this.state.isReady) {
+      return (
+        <View>
+        <View style={{position: 'absolute', alignSelf: 'center', marginTop: '80%'}}>
+        <ActivityIndicator size="large" color="#0000ff" />
         </View>
-    );
+        <Image style={{width: WIDTH, height: HEIGHT}} source={require('./assets/MS-small-splash.png')}/>
+        </View>
+      );
+    }
+
+    if (this.state.isReady) {
+      return (
+          <View style={styles.main}>
+            <Expo.MapView
+              style={{ alignSelf: 'stretch', height: HEIGHT}}
+              region={this.state.region}/>
+
+            <LinearGradient
+              colors={[this.state.color, 'white']}
+              style={{
+                position: 'absolute',
+                left: 0,
+                right: 0,
+                top: 0,
+                height: '125%',
+                opacity: .80,
+              }}/>
+              <View style={styles.overlay}>
+
+              <Text style ={styles.header}>Weather</Text>
+              <Text style ={styles.header2}>Here</Text>
+              <Text style ={styles.header3}>Weather</Text>
+              <Text style={styles.time}>{this.state.displayTime}</Text>
+
+              <Svg height='100' width='100' style={{alignItems: "center", justifyContent: 'center'}}>
+                <Circle
+                  cx='50'
+                  cy='50'
+                  r='45'
+                  stroke='pink'
+                  strokeWidth='2.5'
+                  fill={this.state.color}
+                />
+                <Text style={styles.temp}>{this.state.displayTemp}</Text>
+              </Svg>
+
+              <Slider
+                minimumValue={0}
+                maximumValue={15}
+                minimumTrackTintColor="#1EB1FC"
+                maximumTractTintColor="#1EB1FC"
+                step={1}
+                value={0}
+                onValueChange={value => this.onValueChange(value)}
+                style={{
+                  position: 'relative',
+                  marginTop: HEIGHT * 0.15,
+                  width: WIDTH * .9,
+
+                }}
+                thumbTintColor="#1EB1FC"
+              />
+
+              <Attribution source={require('./assets/poweredby-darksky.png')} styles={{width: '100%', height: '65%', marginTop: 15, opacity: .65}} />
+
+              <Text style={styles.credits}>Small Talk Enterprises</Text>
+
+            </View>
+          </View>
+      );
+    }
+
   }
+
+  // async _cacheResourcesAsync() {
+  //     const image = [
+  //       require('./assets/MS-splash.png'),
+  //     ];
+  //
+  //     const cacheImage = Asset.fromModule(image).downloadAsync();
+  //
+  //     return Promise.all(cacheImage)
+  //
+  //   }
 }
+
 
 const styles = StyleSheet.create({
   main: {

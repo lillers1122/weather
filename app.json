@@ -9,6 +9,9 @@
       "image": "./assets/MS-splash.png",
       "resizeMode": "cover"
     },
+    "loading": {
+      "icon": "./assets/MS-splash.png"
+    },
     "ios": {
       "bundleIdentifier": "com.smalltalkenterprises.mrsky"
     },

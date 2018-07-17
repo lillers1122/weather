@@ -39,8 +39,9 @@ export default class App extends React.Component {
       }
       this.getData(defaultRegion)
     } else {
-      console.log("test!");
+      console.log("test! 42");
       let location = await Location.getCurrentPositionAsync(GEOLOCATION_OPTIONS);
+
       console.log(location);
       if (location) {
         this.locationSet(location );

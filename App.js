@@ -7,6 +7,7 @@ import Attribution from './components/Attribution';
 
 const HEIGHT = Dimensions.get('window').height;
 const WIDTH = Dimensions.get('window').width;
+const NIGHT = ['8 PM', '9 PM', '10 PM', "11 PM", '12 AM', '1 AM', '2 AM', '3 AM', '4 AM', '5 AM']
 const GEOLOCATION_OPTIONS = { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 };
 const KEY = SKY_KEY
 const { Circle } = Svg;
@@ -82,6 +83,7 @@ export default class App extends React.Component {
           displayTemp: Math.round(allTemps[0]),
           displayTime: "NOW",
           date: time,
+          light: 'orange',
           region: region,
           isReady: true,
         });
@@ -95,15 +97,24 @@ export default class App extends React.Component {
     let tempIndicator = Math.round(this.state.tempHourly[value])
     let time = this.pickTime(value)
     let chosen = this.pickColor(tempIndicator)
+    let skycolor = this.pickLight(value)
 
-    this.setState({ displayTemp: tempIndicator, displayTime: time, color: chosen });
+    this.setState({ displayTemp: tempIndicator, displayTime: time, color: chosen, light: skycolor });
   }
 
   pickTime(value) {
-    if (this.state.tempTimes[value] == this.state.date) {
+    if (this.state.tempTimes[value] === this.state.date) {
       return "NOW"
     } else {
       return this.state.tempTimes[value]
+    }
+  }
+
+  pickLight(value) {
+    if (NIGHT.includes(this.state.tempTimes[value])) {
+      return '#3b5998'
+    } else {
+      return 'orange'
     }
   }
 
@@ -161,14 +172,14 @@ export default class App extends React.Component {
               region={this.state.region}/>
 
             <LinearGradient
-              colors={[this.state.color, 'white']}
+              colors={[this.state.light, this.state.color, 'white']}
               style={{
                 position: 'absolute',
                 left: 0,
                 right: 0,
                 top: 0,
-                height: '125%',
-                opacity: .80,
+                height: '105%',
+                opacity: .70,
               }}/>
               <View style={styles.overlay}>
 

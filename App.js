@@ -74,6 +74,7 @@ export default class App extends React.Component {
         let time = ((new Date(responseJson.currently.time * 1000)).toLocaleTimeString('en-US', { timeZone: tZone, hour: '2-digit', hour12: true }));
         let tempHours = responseJson.hourly.data.map((item) => (new Date(item.time * 1000)).toLocaleTimeString('en-US', { timeZone: tZone, hour: '2-digit', hour12: true }))
         let allTemps = responseJson.hourly.data.map((item) => (item.apparentTemperature))
+        console.log('Hello');
 
         this.setState({
           isLoading: false,
@@ -84,7 +85,7 @@ export default class App extends React.Component {
           displayTemp: Math.round(allTemps[0]),
           displayTime: "NOW",
           date: time,
-          light: '#3b5998',
+          light: this.pickLight(time),
           region: region,
           isReady: true,
         });
@@ -98,24 +99,17 @@ export default class App extends React.Component {
     let tempIndicator = Math.round(this.state.tempHourly[value])
     let time = this.pickTime(value)
     let chosen = this.pickColor(tempIndicator)
-    let skycolor = this.pickLight(value)
+    let skycolor = this.pickLight(time)
 
     this.setState({ displayTemp: tempIndicator, displayTime: time, color: chosen, light: skycolor });
   }
 
   pickTime(value) {
+    console.log(typeof value);
     if (this.state.tempTimes[value] === this.state.date) {
       return "NOW"
     } else {
       return this.state.tempTimes[value]
-    }
-  }
-
-  pickLight(value) {
-    if (NIGHT.includes(this.state.tempTimes[value])) {
-      return '#3b5998'
-    } else {
-      return 'orange'
     }
   }
 
@@ -157,6 +151,14 @@ export default class App extends React.Component {
     }
   }
 
+  pickLight(time) {
+    if ( NIGHT.includes(time) ) {
+      return '#3b5998'
+    } else {
+      return 'orange'
+    }
+  }
+
   render(){
     console.log("hello, friend!");
 
@@ -164,13 +166,10 @@ export default class App extends React.Component {
       console.log('ERGGGG');
       return (
         <View style={styles.main}>
-        <View style={styles.overlay}>
-
-        <ActivityIndicator size="large" color="#0000ff" style={{position: 'absolute', alignSelf: 'center', marginTop: 30}}/>
-        </View>
-
-
-        <Image style={{width: WIDTH, height: HEIGHT}} source={require('./assets/MS-small-splash.png')}/>
+          <View style={styles.overlay}>
+            <ActivityIndicator size="large" color="#0000ff" style={{position: 'absolute', alignSelf: 'center', marginTop: 30}}/>
+          </View>
+          <Image style={{width: WIDTH, height: HEIGHT}} source={require('./assets/MS-small-splash.png')}/>
         </View>
       );
     }
@@ -244,9 +243,6 @@ export default class App extends React.Component {
 
 
 const styles = StyleSheet.create({
-  splash: {
-
-  },
   main: {
     justifyContent: 'center',
     alignItems: 'center',

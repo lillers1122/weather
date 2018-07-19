@@ -1,9 +1,10 @@
 import React from 'react';
 import Expo from 'expo';
-import { ActivityIndicator, Image, Alert, StyleSheet, Text, View, Dimensions, Slider  } from 'react-native';
+import { ActivityIndicator, Image, Alert, StyleSheet, Text, View, Dimensions, Slider } from 'react-native';
 import { SKY_KEY } from 'react-native-dotenv'
 import {  Location, Svg, LinearGradient, Permissions } from 'expo';
 import Attribution from './components/Attribution';
+import Info from './components/Info'
 
 const HEIGHT = Dimensions.get('window').height;
 const WIDTH = Dimensions.get('window').width;
@@ -83,7 +84,7 @@ export default class App extends React.Component {
           displayTemp: Math.round(allTemps[0]),
           displayTime: "NOW",
           date: time,
-          light: 'orange',
+          light: '#3b5998',
           region: region,
           isReady: true,
         });
@@ -119,8 +120,14 @@ export default class App extends React.Component {
   }
 
   pickColor(temperature) {
-    if (temperature < 45) {
-      return '1347a2'
+    if (temperature < 33) {
+      return '#060528'
+    } else if (temperature > 33 && temperature <= 37 ) {
+      return '#0C1160'
+    } else if (temperature > 37 && temperature <= 41 ) {
+      return '#0E1475'
+    } else if (temperature > 41 && temperature <= 45 ) {
+      return '#0E3476'
     } else if (temperature > 45 && temperature <= 49 ) {
       return '#135ca4'
     } else if (temperature > 49 && temperature <= 53 ) {
@@ -154,11 +161,15 @@ export default class App extends React.Component {
     console.log("hello, friend!");
 
     if (!this.state.isReady) {
+      console.log('ERGGGG');
       return (
-        <View>
-        <View style={{position: 'absolute', alignSelf: 'center', marginTop: '80%'}}>
-        <ActivityIndicator size="large" color="#0000ff" />
+        <View style={styles.main}>
+        <View style={styles.overlay}>
+
+        <ActivityIndicator size="large" color="#0000ff" style={{position: 'absolute', alignSelf: 'center', marginTop: 30}}/>
         </View>
+
+
         <Image style={{width: WIDTH, height: HEIGHT}} source={require('./assets/MS-small-splash.png')}/>
         </View>
       );
@@ -221,27 +232,21 @@ export default class App extends React.Component {
 
               <Text style={styles.credits}>Small Talk Enterprises</Text>
 
+              <Info background='transparent' color='white'/>
+
             </View>
           </View>
       );
     }
 
   }
-
-  // async _cacheResourcesAsync() {
-  //     const image = [
-  //       require('./assets/MS-splash.png'),
-  //     ];
-  //
-  //     const cacheImage = Asset.fromModule(image).downloadAsync();
-  //
-  //     return Promise.all(cacheImage)
-  //
-  //   }
 }
 
 
 const styles = StyleSheet.create({
+  splash: {
+
+  },
   main: {
     justifyContent: 'center',
     alignItems: 'center',

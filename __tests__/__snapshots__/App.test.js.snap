@@ -1,0 +1,54 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders App correctly 1`] = `
+<View
+  style={
+    Object {
+      "alignItems": "center",
+      "flex": 1,
+      "justifyContent": "center",
+    }
+  }
+>
+  <View
+    style={
+      Object {
+        "alignItems": "center",
+        "position": "absolute",
+      }
+    }
+  >
+    <ActivityIndicator
+      animating={true}
+      color="#0000ff"
+      hidesWhenStopped={true}
+      size="large"
+      style={
+        Object {
+          "alignSelf": "center",
+          "marginTop": 30,
+          "position": "absolute",
+        }
+      }
+    />
+  </View>
+  <Image
+    source={1}
+    style={
+      Object {
+        "height": 1334,
+        "width": 750,
+      }
+    }
+  />
+</View>
+`;
+
+exports[`renders the ActivityIndicator component 1`] = `
+<ActivityIndicator
+  animating={true}
+  color="#999999"
+  hidesWhenStopped={true}
+  size="large"
+/>
+`;

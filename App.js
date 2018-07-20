@@ -40,7 +40,7 @@ export default class App extends React.Component {
       }
       this.getData(defaultRegion);
     } else {
-      console.log("test! 42");
+      console.log('test! 42');
       let location = await Location.getCurrentPositionAsync(GEOLOCATION_OPTIONS);
 
       console.log(location);
@@ -83,7 +83,7 @@ export default class App extends React.Component {
           tempTimes: tempHours,
           color: this.pickColor(Math.round(allTemps[0])),
           displayTemp: Math.round(allTemps[0]),
-          displayTime: "NOW",
+          displayTime: 'NOW',
           date: time,
           light: this.pickLight(time),
           region: region,
@@ -107,7 +107,7 @@ export default class App extends React.Component {
   pickTime(value) {
     console.log(typeof value);
     if (this.state.tempTimes[value] === this.state.date) {
-      return "NOW"
+      return 'NOW'
     } else {
       return this.state.tempTimes[value]
     }
@@ -160,14 +160,14 @@ export default class App extends React.Component {
   }
 
   render(){
-    console.log("hello, friend!");
+    console.log('hello, friend!');
 
     if (!this.state.isReady) {
       console.log('ERGGGG');
       return (
         <View style={styles.main}>
           <View style={styles.overlay}>
-            <ActivityIndicator size="large" color="#0000ff" style={{position: 'absolute', alignSelf: 'center', marginTop: 30}}/>
+            <ActivityIndicator size='large' color='#0000ff' style={{position: 'absolute', alignSelf: 'center', marginTop: 30}}/>
           </View>
           <Image style={{width: WIDTH, height: HEIGHT}} source={require('./assets/MS-small-splash.png')}/>
         </View>
@@ -198,7 +198,7 @@ export default class App extends React.Component {
               <Text style ={styles.header3}>Weather</Text>
               <Text style={styles.time}>{this.state.displayTime}</Text>
 
-              <Svg height='100' width='100' style={{alignItems: "center", justifyContent: 'center'}}>
+              <Svg height='100' width='100' style={{alignItems: 'center', justifyContent: 'center'}}>
                 <Circle
                   cx='50'
                   cy='50'
@@ -213,8 +213,8 @@ export default class App extends React.Component {
               <Slider
                 minimumValue={0}
                 maximumValue={15}
-                minimumTrackTintColor="#1EB1FC"
-                maximumTractTintColor="#1EB1FC"
+                minimumTrackTintColor='#1EB1FC'
+                maximumTractTintColor='#1EB1FC'
                 step={1}
                 value={0}
                 onValueChange={value => this.onValueChange(value)}
@@ -224,7 +224,7 @@ export default class App extends React.Component {
                   width: WIDTH * .9,
 
                 }}
-                thumbTintColor="#1EB1FC"
+                thumbTintColor='#1EB1FC'
               />
 
               <Attribution source={require('./assets/poweredby-darksky.png')} styles={{width: '100%', height: '65%', marginTop: 15, opacity: .65}} />
@@ -255,19 +255,20 @@ const styles = StyleSheet.create({
   header: {
     fontSize: 60,
     marginBottom: 15,
-    color: "white",
+    marginTop: 15,
+    color: 'white',
     fontWeight: 'bold',
   },
   header2: {
     fontSize: 40,
     marginBottom: 15,
-    color: "white",
+    color: 'white',
     fontWeight: 'bold',
   },
   header3: {
     fontSize: 45,
     marginBottom: 20,
-    color: "white",
+    color: 'white',
     fontWeight: 'bold',
   },
   time: {
@@ -275,7 +276,7 @@ const styles = StyleSheet.create({
     fontSize: 35,
     fontWeight: 'bold',
     marginBottom: 20,
-    color: "white",
+    color: 'white',
   },
   temp: {
     fontSize: 45,
